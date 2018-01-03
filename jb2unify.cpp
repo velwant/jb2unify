@@ -107,9 +107,7 @@
 #include "DataPool.h"
 #include <locale.h>
 #include <stdlib.h>
-#ifndef NO_TSEARCH
-#include <search.h>
-#endif
+#define NO_TSEARCH
 
 
 // TODO list:
@@ -130,7 +128,7 @@ void *shapetree=NULL;
 
 int ts_compar(const void *left, const void *right)
  {
-  JB2Shape &l=allshapes[(int)left], &r=allshapes[(int)right];
+  JB2Shape &l=allshapes[*((int *)left)], &r=allshapes[*((int *)right)];
 
   if(l.parent<r.parent)
     return -1;
@@ -221,7 +219,7 @@ void gathershapes(const GP<DjVuDocument> &doc, GPMap<int, JB2Image> &masks,
       allshapes[totalshapes]=shape;
       // They really got the prototype for tsearch wrong.
       // It returns a pointer to the value you fed it, which should be void**
-      thisshape=(int)*(void**)tsearch((void*)totalshapes, &shapetree, ts_compar);
+      thisshape=(long)*(void**)tsearch((const void *)totalshapes, &shapetree, ts_compar);
       if(thisshape==totalshapes)
        {
 	totalshapes++;
@@ -268,9 +266,8 @@ void gathershapes(const GP<DjVuDocument> &doc, GPMap<int, JB2Image> &masks,
  }
 
 void
-jb2unify(const GURL &inputdjvuurl, const GURL &outputdjvuurl,
-    int verbose, GUTF8String &dictid)
- {
+jb2unify(const GURL &inputdjvuurl, const GURL &outputdjvuurl, int verbose, GUTF8String &dictid)
+{
   GP<DjVmDoc> djvm=DjVmDoc::create();
   djvm->read(inputdjvuurl);
   GP<DjVuDocument> doc=DjVuDocument::create_wait(inputdjvuurl);
@@ -500,16 +497,16 @@ main(int argc, const char **argv)
       for (int i=1; i<argc; i++)
         {
           GUTF8String arg = dargv[i];
-	  if (arg == "-v")
-	    verbose++;
-	  else if (arg[0] == '-' && arg[1])
+          if (arg == "-v")
+            verbose++;
+          else if (arg[0] == '-' && arg[1])
             usage();
           else if (inputdjvuurl.is_empty())
             inputdjvuurl = GURL::Filename::UTF8(arg);
           else if (outputdjvuurl.is_empty())
             outputdjvuurl = GURL::Filename::UTF8(arg);
-	  else if (!dictid.length())
-	    dictid = arg;
+          else if (!dictid.length())
+            dictid = arg;
           else
             usage();
         }

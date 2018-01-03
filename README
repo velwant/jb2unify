@@ -7,6 +7,6 @@ Taken form:
 See the big dialogue at the DjVuLibre forum about this program:
     http://sourceforge.net/forum/forum.php?thread_id=854907&forum_id=103286
 
-Copy Makefile.in and jb2unify.cpp into tools,
-replacing the old Makefile.in (works with DjVuLibre 3.5.14).
-Restart configure and make.
+1, Copy jb2unify.cpp into subdir tools from source DjVuLibre
+2, Apply patch Makefile.am.patch on Makefile.am in subdir tools (verified for version 3.5.27.1)
+3, Do autogen.sh && make

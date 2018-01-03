@@ -1,0 +1,21 @@
+diff --git a/tools/Makefile.am b/tools/Makefile.am
+index a7983c6..845d3ea 100644
+--- a/tools/Makefile.am
++++ b/tools/Makefile.am
+@@ -1,4 +1,4 @@
+-bin_PROGRAMS = bzz c44 cjb2 cpaldjvu csepdjvu ddjvu djvm djvmcvt	\
++bin_PROGRAMS = bzz c44 cjb2 jb2unify cpaldjvu csepdjvu ddjvu djvm djvmcvt	\
+  djvudump djvups djvuextract djvumake djvused djvutxt djvuserve
+ 
+ jb2cmp_SOURCES = jb2cmp/classify.cpp jb2cmp/cuts.cpp		\
+@@ -20,6 +20,10 @@ cjb2_SOURCES = cjb2.cpp jb2tune.cpp common.h jb2tune.h $(jb2cmp_SOURCES)
+ cjb2_CPPFLAGS = $(AM_CPPFLAGS) $(TIFF_CFLAGS)
+ cjb2_LDADD = $(DJLIB) $(TIFF_LIBS) $(PTHREAD_LIBS)
+ 
++jb2unify_SOURCES = jb2unify.cpp jb2tune.cpp common.h jb2tune.h $(jb2cmp_SOURCES)
++jb2unify_CPPFLAGS = $(AM_CPPFLAGS)
++jb2unify_LDADD = $(DJLIB) $(PTHREAD_LIBS)
++
+ cpaldjvu_SOURCES = cpaldjvu.cpp jb2tune.cpp common.h jb2tune.h $(jb2cmp_SOURCES)
+ cpaldjvu_LDADD = $(DJLIB) $(PTHREAD_LIBS)
+ 
