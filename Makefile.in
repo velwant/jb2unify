@@ -1,0 +1,185 @@
+#C- This program is free software; you can redistribute it and/or 
+#C- modify it under the terms of the GNU General Public License, 
+#C- version 2.  The license should have accompanied the program 
+#C- or you may obtain a copy of the license from the Free Software
+#C- Foundation at http://www.fsf.org.
+#C- 
+#C- This program is distributed in the hope that it will be useful,
+#C- but WITHOUT ANY WARRANTY; without even the implied warranty of
+#C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#C- GNU General Public License for more details.
+
+@SET_MAKE@
+SHELL = @SHELL@
+VPATH = @srcdir@
+PACKAGE_NAME = @PACKAGE_NAME@
+PACKAGE_VERSION = @PACKAGE_VERSION@
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+top_builddir = ..
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+datadir = @datadir@
+libdir = @libdir@
+mandir = @mandir@
+
+CC = @CC@
+CXX = @CXX@
+RM = @RM@
+AR = @AR@
+LN_S = @LN_S@
+TOUCH = @TOUCH@
+INSTALL = @INSTALL@
+LIBTOOL = @LIBTOOL@
+
+DEFS = @DEFS@
+OPTS = @OPTS@
+CXXRPOFLAGS = @CXXRPOFLAGS@
+JPEG_LIBS=@JPEG_LIBS@
+JPEG_CFLAGS=@JPEG_CFLAGS@
+TIFF_LIBS=@TIFF_LIBS@
+TIFF_CFLAGS=@TIFF_CFLAGS@
+THREAD_LIBS = @THREAD_LIBS@
+THREAD_CFLAGS = @THREAD_CFLAGS@
+
+LIBDJVU = ${top_builddir}/libdjvu/libdjvulibre.la
+
+INCS = -I${top_builddir} -I${top_srcdir} -I${top_srcdir}/libdjvu -I${srcdir}
+FLAGS = ${DEFS} ${INCS} ${OPTS} ${JPEG_CFLAGS} ${TIFF_CFLAGS} ${THREAD_CFLAGS}
+LIBS= @LDFLAGS@ ${JPEG_LIBS} ${THREAD_LIBS} @LIBS@
+MORELIBS= @LDFLAGS@ ${JPEG_LIBS} ${TIFF_LIBS} ${THREAD_LIBS} @LIBS@
+CFLAGS = @CPPFLAGS@ @CFLAGS@ ${FLAGS}
+CXXFLAGS = @CPPFLAGS@ @CXXFLAGS@ ${CXXRPOFLAGS} ${FLAGS}
+
+PROGRAMS = bzz c44 cjb2 cpaldjvu csepdjvu \
+	   ddjvu djvm djvmcvt djvudump \
+	   djvups djvuextract djvumake \
+	   djvused djvutxt djvuserve jb2unify
+
+all: ${PROGRAMS} 
+
+install: install-bin install-man
+
+install-bin: ${PROGRAMS} FORCE
+	${INSTALL} -d ${DESTDIR}${bindir}
+	for n in ${PROGRAMS} ; do \
+	  ${LIBTOOL} --mode=install \
+	    ${INSTALL} -s -m 0755 $$n ${DESTDIR}${bindir} \
+          || exit ; done
+
+install-man: FORCE
+	${INSTALL} -d ${DESTDIR}${mandir}/man1
+	for n in ${srcdir}/*.1 ; do \
+	  ${INSTALL} -m 0644 $$n ${DESTDIR}${mandir}/man1 || exit ; done 
+
+depend: FORCE
+	${CXX} -MM ${CXXFLAGS} ${srcdir}/*.cpp > Makefile.dep
+
+clean: FORCE
+	-${LIBTOOL} --mode=clean ${RM} 2>/dev/null ${PROGRAMS}
+	-${RM} 2>/dev/null *.o *.a *.so *.stamp
+
+distclean: clean 
+	-${RM} -r 2>/dev/null Makefile *.rpo ii_files
+
+# Link
+
+JB2OBJS= jb2cmp.o jb2tune.o
+
+annotate: annotate.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} annotate.o ${LIBDJVU} ${LIBS}
+
+bzz: bzz.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} bzz.o ${LIBDJVU} ${LIBS}
+
+c44: c44.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} c44.o ${LIBDJVU} ${LIBS}
+
+cjb2: cjb2.o ${JB2OBJS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} cjb2.o ${JB2OBJS} ${LIBDJVU} ${MORELIBS}
+
+cpaldjvu: cpaldjvu.o ${JB2OBJS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} cpaldjvu.o ${JB2OBJS} ${LIBDJVU} ${LIBS}
+
+csepdjvu: csepdjvu.o ${JB2OBJS}
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} csepdjvu.o ${JB2OBJS} ${LIBDJVU} ${LIBS}
+
+ddjvu: ddjvu.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} ddjvu.o ${LIBDJVU} ${MORELIBS}
+
+djvm: djvm.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvm.o ${LIBDJVU} ${LIBS}
+
+djvmcvt: djvmcvt.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvmcvt.o ${LIBDJVU} ${LIBS}
+
+djvudump: djvudump.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvudump.o ${LIBDJVU} ${LIBS}
+
+djvups: djvups.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvups.o ${LIBDJVU} ${LIBS}
+
+djvuextract: djvuextract.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvuextract.o ${LIBDJVU} ${LIBS}
+
+djvumake: djvumake.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvumake.o ${LIBDJVU} ${LIBS}
+
+djvused: djvused.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvused.o ${LIBDJVU} ${LIBS}
+
+djvutxt: djvutxt.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvutxt.o ${LIBDJVU} ${LIBS}
+
+djvuserve: djvuserve.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} djvuserve.o ${LIBDJVU} ${LIBS}
+
+jb2unify: jb2unify.o
+	${LIBTOOL} --mode=link \
+	  ${CXX} -o $@ ${CXXFLAGS} jb2unify.o ${LIBDJVU} ${LIBS}
+
+${PROGRAMS}: ${LIBDJVU}
+
+# Rules
+
+FORCE:
+.PHONY: FORCE
+.SUFFIXES: .c .cpp .o
+
+.c.o:
+	${CC} ${CFLAGS} -c $<
+
+.cpp.o:
+	${CXX} ${CXXFLAGS} -c $<
+
+.c.lo:
+	${LIBTOOL} --mode=compile ${CC} ${CFLAGS} -c $<
+
+.cpp.lo:
+	${LIBTOOL} --mode=compile ${CXX} ${CXXFLAGS} -c $<
+
+# Dependencies
+
+Makefile.dep: ${srcdir}/Makefile.dep
+	cp ${srcdir}/Makefile.dep $@
+
+include Makefile.dep
