@@ -1,12 +1,12 @@
-Эта программа Яна Вернье (Yann Vernier).
-Она умеет делать словари, но объединяет только равные буквы.
+Original code is by Jan Vernier (Yann Vernier).
+Simple utility for creation shared dictionaries (Djbz) in the DjVu files
+Do only unifies equal shapes prom pages (in ex. letters).
 
-Взята тут:
+Taken form:
     http://donkey.dyndns.org/~yann/jb2unify.cpp
-См. большой диалог на форуме DjVuLibre по поводу этой программы:
+See the big dialogue at the DjVuLibre forum about this program:
     http://sourceforge.net/forum/forum.php?thread_id=854907&forum_id=103286
 
-
-Скопируйте Makefile.in и jb2unify.cpp в tools,
-заменив старый Makefile.in (работает с DjVuLibre 3.5.14).
-Перезапустите configure и make.
+Copy Makefile.in and jb2unify.cpp into tools,
+replacing the old Makefile.in (works with DjVuLibre 3.5.14).
+Restart configure and make.
