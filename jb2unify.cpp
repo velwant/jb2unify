@@ -214,6 +214,10 @@ void gathershapes(const GP<DjVuDocument> &doc, GPMap<int, JB2Image> &masks,
 	if(verbose>1)
 	  DjVuFormatErrorUTF8("page %d shape %d added as shape %d", page,
 	      shapeno, thisshape);
+	    char fname[50];
+	    sprintf(fname, "shape%05d.pgm", shapeno);
+	    GP<ByteStream> bs=ByteStream::create(GURL::Filename::UTF8(fname), "wb");
+	    shape.bits->save_pgm(*bs);
        }
 #else // TSEARCH
       allshapes[totalshapes]=shape;
